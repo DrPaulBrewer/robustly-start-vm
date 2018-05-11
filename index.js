@@ -13,6 +13,9 @@
  * @return {Function} robustlyStartVM
  */
 
+const promiseRetry = require('promise-retry');
+const after = require('after-operation');
+
 module.exports = function(gce, safety, timeout){
     if (typeof(safety)!=="string") throw new Error("safety must be a string");
     if (safety.length===0) throw new Error("safety string must not be length 0");
