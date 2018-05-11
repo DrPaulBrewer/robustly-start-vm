@@ -1,0 +1,37 @@
+{
+  "name": "robustly-start-vm",
+  "version": "0.2.0",
+  "description": "robustly start a vm on Google Compute Engine; if a zone is full retry using your supplied template functions",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo no tests yet"
+  },
+  "keywords": [
+    "google-compute-engine",
+    "robust",
+    "vm"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drpaulbrewer/robustly-start-vm.git"
+  },
+  "bugs": {
+    "url": "https://github.com/drpaulbrewer/robustly-start-vm/issues"
+  },
+  "homepage": "https://github.com/drpaulbrewer/robustly-start-vm#readme",
+  "author": "drpaulbrewer@eaftc.com",
+  "license": "MIT",
+  "devDependencies": {
+    "@google-cloud/compute": "^0.10.0",
+    "mocha": "^5.1.1",
+    "should": "^13.2.1"
+  },
+  "dependencies": {
+    "after-operation": "^1.0.1",
+    "boom": "^7.2.0",
+    "promise-retry": "^1.1.1"
+  }
+}
