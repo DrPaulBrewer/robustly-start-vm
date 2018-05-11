@@ -17,6 +17,11 @@ const promiseRetry = require('promise-retry');
 const after = require('after-operation');
 const Boom = require('boom');
 
+function toRegion(z){
+    // remove the dash and the last letter from the zone to get the region
+    return z.replace(/-.$/,'');
+}
+
 module.exports = function(gce, safety, timeout){
     if (typeof(safety)!=="string") throw new Error("safety must be a string");
     if (safety.length===0) throw new Error("safety string must not be length 0");
@@ -27,7 +32,7 @@ module.exports = function(gce, safety, timeout){
 	if (typeof(diskFunc)!=="function") throw new Error("bad or missing function diskFunc");
 	if (typeof(vmFunc)!=="function") throw new Error("bad or missing function vmFunc");
 	function locationForAttempt(n){
-	    return {'zone':zones[n-1], 'region': zonesForGoogleCloud.toRegion(zones[n-1])};
+	    return {'zone':zones[n-1], 'region': toRegion(zones[n-1])};
 	}
 	function diskForAttempt(n){
 	    return diskFunc(locationForAttempt(n));
