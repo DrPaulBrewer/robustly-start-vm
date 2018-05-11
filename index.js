@@ -15,6 +15,7 @@
 
 const promiseRetry = require('promise-retry');
 const after = require('after-operation');
+const Boom = require('boom');
 
 module.exports = function(gce, safety, timeout){
     if (typeof(safety)!=="string") throw new Error("safety must be a string");
