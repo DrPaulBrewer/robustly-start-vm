@@ -1,6 +1,6 @@
 {
   "name": "robustly-start-vm",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "robustly start a vm on Google Compute Engine; if a zone is full retry using your supplied template functions",
   "main": "index.js",
   "directories": {
