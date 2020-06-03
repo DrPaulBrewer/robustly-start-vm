@@ -22,14 +22,14 @@ function toRegion(z) {
 }
 
 module.exports = function (gce, safety, timeout) {
-  if (typeof (safety) !== "string") throw new Error("safety must be a string");
+  if (typeof(safety) !== "string") throw new Error("safety must be a string");
   if (safety.length === 0) throw new Error("safety string must not be length 0");
-  return function robustlyStartVM({ zones, vmname, diskFunc, vmFunc }) {
+  return function({ zones, vmname, diskFunc, vmFunc }) {
     if (!safety || !(vmname.startsWith(safety))) throw new Error("bad vmname ${vmname}");
     if (!Array.isArray(zones)) throw new Error("bad or missing array zones");
-    if (typeof (vmname) !== "string") throw new Error("bad or missing string vmname");
-    if (typeof (diskFunc) !== "function") throw new Error("bad or missing function diskFunc");
-    if (typeof (vmFunc) !== "function") throw new Error("bad or missing function vmFunc");
+    if (typeof(vmname) !== "string") throw new Error("bad or missing string vmname");
+    if (typeof(diskFunc) !== "function") throw new Error("bad or missing function diskFunc");
+    if (typeof(vmFunc) !== "function") throw new Error("bad or missing function vmFunc");
 
     function locationForAttempt(n) {
       return { 'zone': zones[n - 1], 'region': toRegion(zones[n - 1]) };
@@ -49,7 +49,7 @@ module.exports = function (gce, safety, timeout) {
         gzone
         .disk(vmname)
         .delete()
-        .catch(ee => console.log(`Cleanup error on disk deletion ${vmname}: ${ee}. `))
+        .catch((ee) => console.log(`Cleanup error on disk deletion ${vmname}: ${ee}. `))
       );
     }
 
@@ -62,33 +62,39 @@ module.exports = function (gce, safety, timeout) {
       return (prep
         .then(() => (gzone.createDisk(vmname, diskForAttempt(attemptNumber))))
         .then((data) => {
-          const disk = data[0];
+          // const disk = data[0];
           const operation = data[1];
-          const apiResponse = data[2];
-          return after(operation, disk);
+          // const apiResponse = data[2];
+          return operation.promise();
         })
-        .then((disk) => {
-          return (gzone
+        .then(() => (gzone
             .createVM(vmname, vmForAttempt(attemptNumber))
             .then((data) => {
-              const vm = data[0];
+              // const vm = data[0];
               const operation = data[1];
-              const apiResponse = data[2];
-              return after(operation, locationForAttempt(attemptNumber));
+              // const apiResponse = data[2];
+              return operation.promise();
             })
-          );
-        })
+          )
+        )
+        .then(()=>locationForAttempt(attemptNumber))
         .catch((e) => {
-          if (e.toString().includes("already exists")) {
+          const lowerCaseErrorMessage = e.toString().toLowerCase();
+          if (lowerCaseErrorMessage.includes("already exists")) {
             throw Boom.conflict(e.toString());
           }
-          if (e.toString().toLowerCase().includes("try a different zone")) {
+          const retryOnTheseErrors = [
+            "try a different zone",
+            "unknown zone"
+          ];
+          if (retryOnTheseErrors.some((excuse)=>(lowerCaseErrorMessage.includes(excuse)))){
             retry(e);
+          } else {
+            throw e;
           }
-          throw e;
         })
       );
     }
     return promiseRetry(attemptStartVM, { retries: zones.length - 1, minTimeout: (timeout || 30000), factor: 1.5 });
-  }
+  };
 };
