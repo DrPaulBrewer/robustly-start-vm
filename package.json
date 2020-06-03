@@ -7,7 +7,7 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo no tests yet"
+    "test": "echo no tests provided;"
   },
   "keywords": [
     "google-compute-engine",
@@ -25,13 +25,10 @@
   "author": "drpaulbrewer@eaftc.com",
   "license": "MIT",
   "devDependencies": {
-    "@google-cloud/compute": "^0.10.0",
-    "mocha": "^5.1.1",
-    "should": "^13.2.1"
+    "eslint": "^7.1.0"
   },
   "dependencies": {
-    "after-operation": "^1.0.1",
-    "boom": "^7.2.0",
+    "boom": "^7.3.0",
     "promise-retry": "^1.1.1"
   }
 }

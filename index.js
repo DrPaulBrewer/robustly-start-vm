@@ -3,18 +3,17 @@
 // https://opensource.org/licenses/MIT
 // This software is NOT a product of Google, Inc.
 
-// jshint node:true, esversion:6 
+// jshint node:true, esversion:6
 
 /**
  * returns the robustlyStartVM function.  new VMs must have names starting with the configured safety string.
  * @param {Object} gce result from calling `const gce = require('@google-cloud/compute')()
- * @param {string} safety (required) sets the safety string.  Creating a VM with a name that does not start with the safety string is forbidden. 
+ * @param {string} safety (required) sets the safety string.  Creating a VM with a name that does not start with the safety string is forbidden.
  * @param {number} timeout (optional, default 30000) delay in ms to retry creating a vm that failed to start
  * @return {Function} robustlyStartVM
  */
 
 const promiseRetry = require('promise-retry');
-const after = require('after-operation');
 const Boom = require('boom');
 
 function toRegion(z) {
